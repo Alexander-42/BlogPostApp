@@ -1,5 +1,5 @@
 const config = require('./utils/config')
-
+const logger = require('./utils/logger')
 const express = require('express')
 const mongoose = require('mongoose')
 
@@ -17,7 +17,7 @@ const blogSchema = mongoose.Schema({
 const Blog = mongoose.model('Blog', blogSchema)
 
 const mongoUrl = config.MONGODB_URI
-console.log('connecting to ', mongoUrl)
+logger.info('Connecting to ', mongoUrl)
 mongoose.connect(mongoUrl)
   .then(result => {
     console.log('connected to MongoDB')
@@ -44,5 +44,5 @@ app.post('/api/blogs', (request, response) => {
 
 const PORT = config.PORT
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  logger.info(`server running on port ${PORT}`)
 })
