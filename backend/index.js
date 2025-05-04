@@ -3,28 +3,9 @@ const logger = require('./utils/logger')
 const express = require('express')
 const mongoose = require('mongoose')
 
-mongoose.set('strictQuery', false)
+const Blog = require('./models/blog')
 
 const app = express()
-
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
-const mongoUrl = config.MONGODB_URI
-logger.info('Connecting to ', mongoUrl)
-mongoose.connect(mongoUrl)
-  .then(result => {
-    console.log('connected to MongoDB')
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB', error.message)
-})
 
 app.use(express.json())
 
