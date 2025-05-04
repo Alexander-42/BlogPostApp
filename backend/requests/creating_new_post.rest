@@ -3,5 +3,7 @@ Content-Type: application/json
 
 {
     "title": "Test",
-    "content": "Testing is easy with rest"
+    "author": "Tester",
+    "url": "jeejee.lol",
+    "likes": 4
 }
