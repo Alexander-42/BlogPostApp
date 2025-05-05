@@ -220,6 +220,25 @@ describe("The author with most blogs", () => {
       __v: 0
     }
   ]
+
+  const blogsWithMultipleMostAuthor = [
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      __v: 0
+    },
+    {
+      _id: "5a422ba71b54a676234d17fb",
+      title: "TDD harms architecture",
+      author: "Robert C. Martin",
+      url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+      likes: 0,
+      __v: 0
+    }
+  ]
   
   const blogs = [
     {
@@ -303,5 +322,10 @@ describe("The author with most blogs", () => {
       const result = listHelper.mostBlogs(blogsShuffled)
       assert.deepStrictEqual(result, {author: 'Edsger W. Dijkstra', blogs: 3})
     }
+  })
+  
+  test("when the list has multiple authors with most blogs", () => {
+    const result = listHelper.mostBlogs(blogsWithMultipleMostAuthor)
+    assert.deepStrictEqual(result.blogs, 1)
   })
 })
