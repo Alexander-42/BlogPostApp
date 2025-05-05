@@ -46,9 +46,38 @@ const mostBlogs = (blogs) => {
     return most
 }
 
+const mostLikesHelper = (blogsArray) => {
+    const numberOfBlogs = blogsArray.length
+    let totalLikes = blogsArray.reduce((total, blog) => total + blog.likes, 0)
+    return totalLikes
+}
+
+const mostLikes = (blogs) => {
+    const noOfBlogs = blogs.length
+    let most = noOfBlogs > 0 ? blogs[0] : 'the list is empty'
+
+    if (noOfBlogs === 1) {
+        most = {author: most.author, likes: most.likes}
+    } else if (noOfBlogs > 1) {
+        const blogsGroupedByAuthor = lodash.groupBy(blogs, 'author')
+        const authors = Object.keys(blogsGroupedByAuthor)
+        const blogsByAuthor = Object.values(blogsGroupedByAuthor)
+        
+        const blogsPerAuthor = blogsByAuthor.map((blogsArray) => mostLikesHelper(blogsArray))
+
+        const authorLikes = lodash.zip(authors, blogsPerAuthor)
+
+        const authorLikesDesc = authorLikes.sort((a,b) => b[1] - a[1])
+
+        most = {author: authorLikesDesc[0][0], likes: authorLikesDesc[0][1] }
+    }
+    return most
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
