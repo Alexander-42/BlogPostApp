@@ -30,6 +30,13 @@ beforeEach(async () => {
     }
 })
 
+const testBlog = {
+    title: 'A third test blog',
+    author: 'A third test author',
+    url: 'A third test url',
+    likes: 3
+}
+
 test('blogs are returned as json', async () => {
     await api
         .get('/api/blogs')
@@ -41,6 +48,23 @@ test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, initialBlogs.length)
+})
+
+test('A new blog can be submitted', async () => {
+
+    await api
+        .post('/api/blogs')
+        .send(testBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+    const response = await api.get('/api/blogs')
+
+    const titles = response.body.map(r => r.title)
+
+    assert.strictEqual(response.body.length, initialBlogs.length + 1)
+
+    assert(titles.includes('A third test blog'))
 })
 
 after(async () => {
