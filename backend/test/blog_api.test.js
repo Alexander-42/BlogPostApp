@@ -201,6 +201,14 @@ describe('Updating blogs', () => {
             .put(`/api/blogs/${updatableBlog.id}`)
             .send(updatedBlog)
             .expect(200)
+        
+        
+        const blogsAfterUpdate = await Blog.find({})
+
+        assert.strictEqual(blogsAfterUpdate.length, initialBlogs.lenght)
+
+        assert(!blogsAfterUpdate.includes(updatableBlog))
+        assert(blogsAfterUpdate.includes(updatedBlog))
 
     })
 })
