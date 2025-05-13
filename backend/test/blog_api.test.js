@@ -194,22 +194,25 @@ describe('Updating blogs', () => {
             author: updatableBlog.author,
             url: updatableBlog.url,
             likes: 10,
-            id: updatableBlog.id
         }
 
-        await api
-            .put(`/api/blogs/${updatableBlog.id}`)
-            .send(updatedBlog)
-            .expect(200)
+        try {
+            await api
+                .put(`/api/blogs/${updatableBlog.id}`)
+                .send(updatedBlog)
+                .expect(200) 
+        } catch (exception) {
+            console.error(exception)
+            throw exception
+        }
         
-        
-        const blogsAfterUpdate = await Blog.find({})
+        const blogsAfterUpdate = await api.get('/api/blogs')
+        const blogsAfterUpdateArr = blogsAfterUpdate.body
 
-        assert.strictEqual(blogsAfterUpdate.length, initialBlogs.lenght)
+        assert.strictEqual(blogsAfterUpdateArr.length, initialBlogs.length)
 
-        assert(!blogsAfterUpdate.includes(updatableBlog))
-        assert(blogsAfterUpdate.includes(updatedBlog))
-
+        assert(!blogsAfterUpdateArr.some(b => b.id === updatableBlog.id && b.likes === updatableBlog.likes))
+        assert(blogsAfterUpdateArr.some(b => b.id === updatableBlog.id && b.likes === updatedBlog.likes))
     })
 })
 
