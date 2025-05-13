@@ -37,6 +37,12 @@ const testBlog = {
     likes: 3
 }
 
+const testBlogLikesOmitted = {
+    title: 'A fourth test blog',
+    author: 'A fourth test author',
+    url: 'a fourth test url'
+}
+
 test('blogs are returned as json', async () => {
     await api
         .get('/api/blogs')
@@ -56,7 +62,7 @@ test('A new blog can be submitted', async () => {
         .post('/api/blogs')
         .send(testBlog)
         .expect(201)
-        .expect('Content-Type', /application\/json/);
+        .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
 
@@ -94,6 +100,24 @@ describe('Returned blogs have correct fields', () => {
 
             assert.deepStrictEqual(__vs, Array(initialBlogs.length).fill(undefined))
         })
+    })
+})
+
+describe('The default value for likes is 0', () => {
+
+    test('Submitting a blog with likes field omitted', async () => {
+
+        await api
+            .post('/api/blogs')
+            .send(testBlogLikesOmitted)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const response = await api.get('/api/blogs')
+
+        const likesTitles = response.body.map(r => [r.likes, r.title])
+        assert(likesTitles.some(([likes, title]) => likes === 0 && title === 'A fourth test blog'))
+
     })
 })
 
