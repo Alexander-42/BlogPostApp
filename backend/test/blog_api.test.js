@@ -161,6 +161,26 @@ describe('Returned blogs have correct fields and format', () => {
     })
 })
 
+describe('Deleting blogs', () => {
+    
+    test('succeeds with status code 204 if id is correct', async () => {
+        const blogs = await Blog.find({})
+
+        const deletableBlog = blogs[0]
+
+        await api
+            .delete(`/api/blogs/${deletableBlog.id}`)
+            .expect(204)
+
+        const blogsAfterDel = await Blog.find({})
+
+        assert.strictEqual(blogsAfterDel.length, initialBlogs.length - 1)
+
+        const titles = blogsAfterDel.map(r => r.title)
+        assert(!titles.includes(deletableBlog.title))
+    })
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
