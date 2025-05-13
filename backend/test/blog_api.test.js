@@ -1,5 +1,5 @@
 const assert = require('node:assert')
-const { test, after, beforeEach} = require('node:test')
+const { test, after, beforeEach, describe} = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -65,6 +65,36 @@ test('A new blog can be submitted', async () => {
     assert.strictEqual(response.body.length, initialBlogs.length + 1)
 
     assert(titles.includes('A third test blog'))
+})
+
+describe('Returned blogs have correct fields', () => {
+
+    test('identification field id exists', async () => {
+        const response = await api.get('/api/blogs')
+    
+        const ids = response.body.map(r => r.id)
+    
+        assert.strictEqual(ids.length, initialBlogs.length)
+    })
+
+    describe('internal fields are not returned', async () => {
+
+        test('field _id is not returned', async () => {
+            const response = await api.get('/api/blogs')
+
+            const _ids = response.body.map(r => r._id)
+
+            assert.deepStrictEqual(_ids, Array(initialBlogs.length).fill(undefined))
+        })
+
+        test('field __v is not returned', async () => {
+            const response = await api.get('/api/blogs')
+
+            const __vs = response.body.map(r => r.__v)
+
+            assert.deepStrictEqual(__vs, Array(initialBlogs.length).fill(undefined))
+        })
+    })
 })
 
 after(async () => {
