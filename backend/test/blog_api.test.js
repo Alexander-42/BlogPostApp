@@ -57,7 +57,7 @@ const testBlogNoUrl = {
 
 describe('Submitting blogs', () => {
 
-    test('A new blog can be submitted', async () => {
+    test('A new blog can be submitted and returns with status code 201 when succesful', async () => {
 
         await api
             .post('/api/blogs')
@@ -74,14 +74,14 @@ describe('Submitting blogs', () => {
         assert(titles.includes('A third test blog'))
     })
 
-    test('Blogs require field title', async () => {
+    test('Blogs require field title and returns with status code 400 when missing', async () => {
         await api
             .post('/api/blogs')
             .send(testBlogNoTitle)
             .expect(400)
     })
 
-    test('Blogs require field url', async () => {
+    test('Blogs require field url and eturns with status code 400 when missing', async () => {
         await api
             .post('/api/blogs')
             .send(testBlogNoUrl)
@@ -178,6 +178,30 @@ describe('Deleting blogs', () => {
 
         const titles = blogsAfterDel.map(r => r.title)
         assert(!titles.includes(deletableBlog.title))
+    })
+})
+
+describe('Updating blogs', () => {
+
+    test('succeeds with status code 200', async () => {
+
+        const blogs = await Blog.find({})
+
+        const updatableBlog = blogs[0]
+
+        const updatedBlog = {
+            title: updatableBlog.title,
+            author: updatableBlog.author,
+            url: updatableBlog.url,
+            likes: 10,
+            id: updatableBlog.id
+        }
+
+        await api
+            .put(`/api/blogs/${updatableBlog.id}`)
+            .send(updatedBlog)
+            .expect(200)
+
     })
 })
 
