@@ -196,15 +196,10 @@ describe('Updating blogs', () => {
             likes: 10,
         }
 
-        try {
-            await api
+        await api
                 .put(`/api/blogs/${updatableBlog.id}`)
                 .send(updatedBlog)
-                .expect(200) 
-        } catch (exception) {
-            console.error(exception)
-            throw exception
-        }
+                .expect(200)
         
         const blogsAfterUpdate = await api.get('/api/blogs')
         const blogsAfterUpdateArr = blogsAfterUpdate.body
