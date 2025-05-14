@@ -270,6 +270,26 @@ describe('Database initialized with one user', () => {
         assert(result.body.error.includes('Expected `username` to be unique'))
         assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
+
+    test('creation fails with statuscode 400 and message if password is less than 3 characters', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'alexander-42',
+            name: 'Alexander Oiling',
+            password: invalidPasswords[0],
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+        
+        const usersAtEnd = await helper.usersInDb()
+        assert(result.body.error.includes('password expected to be atleast 3 characters long'))
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    })
 })
 
 after(async () => {
