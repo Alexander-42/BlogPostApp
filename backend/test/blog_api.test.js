@@ -7,6 +7,7 @@ const Blog = require('../models/blog')
 const bcryptjs = require('bcryptjs')
 const User = require('../models/user')
 const config = require('../utils/config')
+const helper = require('./test_helper')
 
 validPasswords = config.validTestPasswords
 invalidPasswords = config.invalidTestPassords
@@ -170,7 +171,7 @@ describe('Returned blogs have correct fields and format', () => {
 describe('Deleting blogs', () => {
     
     test('succeeds with status code 204 if id is correct', async () => {
-        const blogs = await Blog.find({})
+        const blogs = await helper.blogsInDb()
 
         const deletableBlog = blogs[0]
 
@@ -178,7 +179,7 @@ describe('Deleting blogs', () => {
             .delete(`/api/blogs/${deletableBlog.id}`)
             .expect(204)
 
-        const blogsAfterDel = await Blog.find({})
+        const blogsAfterDel = await helper.blogsInDb()
 
         assert.strictEqual(blogsAfterDel.length, initialBlogs.length - 1)
 
@@ -191,7 +192,7 @@ describe('Updating blogs', () => {
 
     test('succeeds with status code 200', async () => {
 
-        const blogs = await Blog.find({})
+        const blogs = await helper.blogsInDb()
 
         const updatableBlog = blogs[0]
 
@@ -228,13 +229,12 @@ describe('Database initialized with one user', () => {
     })
 
     test('User can be created with a fresh username', async () => {
-        const usersAtStart = await User.find({})
-        const usersAtStartUsable = usersAtStart.map(user => user.toJSON())
+        const usersAtStart = await helper.usersInDb()
 
         const newUser = {
             username: 'alexander-42',
             name: 'Alexander Oiling',
-            password: validPasswords[2],
+            password: validPasswords[1],
         }
 
         await api
@@ -243,13 +243,33 @@ describe('Database initialized with one user', () => {
             .expect(201)
             .expect('Content-Type', /application\/json/)
         
-        const usersAtEnd = await User.find({})
-        const usersAtEndUsable = usersAtEnd.map(user => user.toJSON())
+        const usersAtEnd = await helper.usersInDb()
 
-        assert.strictEqual(usersAtEndUsable.length, usersAtStartUsable.length + 1)
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
-        const usernames = usersAtEndUsable.map(u => u.username)
+        const usernames = usersAtEnd.map(u => u.username)
         assert(usernames.includes(newUser.username))
+    })
+
+    test('creation fails with statuscode 400 and message if username is taken', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'superuser',
+            password: validPasswords[2],
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert(result.body.error.includes('expected `username` to be unique'))
+
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
 })
 
