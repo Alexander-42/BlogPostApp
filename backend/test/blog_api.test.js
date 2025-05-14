@@ -4,6 +4,12 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const bcryptjs = require('bcryptjs')
+const User = require('../models/user')
+const config = require('../utils/config')
+
+validPasswords = config.validTestPasswords
+invalidPasswords = config.invalidTestPassords
 
 const api = supertest(app)
 
@@ -208,6 +214,42 @@ describe('Updating blogs', () => {
 
         assert(!blogsAfterUpdateArr.some(b => b.id === updatableBlog.id && b.likes === updatableBlog.likes))
         assert(blogsAfterUpdateArr.some(b => b.id === updatableBlog.id && b.likes === updatedBlog.likes))
+    })
+})
+
+describe('Database initialized with one user', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcryptjs.hash(validPasswords[0], 10)
+        const user = new User({username: 'root', passwordHash})
+
+        await user.save()
+    })
+
+    test('User can be created with a fresh username', async () => {
+        const usersAtStart = await User.find({})
+        const usersAtStartUsable = usersAtStart.map(user => user.toJSON())
+
+        const newUser = {
+            username: 'alexander-42',
+            name: 'Alexander Oiling',
+            password: validPasswords[2],
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        const usersAtEnd = await User.find({})
+        const usersAtEndUsable = usersAtEnd.map(user => user.toJSON())
+
+        assert.strictEqual(usersAtEndUsable.length, usersAtStartUsable.length + 1)
+
+        const usernames = usersAtEndUsable.map(u => u.username)
+        assert(usernames.includes(newUser.username))
     })
 })
 
