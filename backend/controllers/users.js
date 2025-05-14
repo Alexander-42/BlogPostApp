@@ -19,4 +19,9 @@ usersRouter.post('/', async (request, response) => {
     response.status(200).json(savedUser.toJSON())
 })
 
+usersRouter.get('/', async (request, response) => {
+    const users = await User.find({})
+    response.json(users.map(user => user.toJSON()))
+})
+
 module.exports = usersRouter
