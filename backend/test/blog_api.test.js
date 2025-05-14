@@ -219,6 +219,7 @@ describe('Updating blogs', () => {
 })
 
 describe('Database initialized with one user', () => {
+
     beforeEach(async () => {
         await User.deleteMany({})
 
@@ -246,7 +247,6 @@ describe('Database initialized with one user', () => {
         const usersAtEnd = await helper.usersInDb()
 
         assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
-
         const usernames = usersAtEnd.map(u => u.username)
         assert(usernames.includes(newUser.username))
     })
@@ -267,8 +267,7 @@ describe('Database initialized with one user', () => {
             .expect('Content-Type', /application\/json/)
 
         const usersAtEnd = await helper.usersInDb()
-        assert(result.body.error.includes('expected `username` to be unique'))
-
+        assert(result.body.error.includes('Expected `username` to be unique'))
         assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
 })
