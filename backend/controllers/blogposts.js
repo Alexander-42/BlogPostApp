@@ -10,7 +10,7 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response, next) => {
   const blogBody = request.body
 
-  const user = await User.findById(body.userId)
+  const user = await User.findById(blogBody.userId)
 
   if (!user) {
     return response.status(400).json({ error: 'userId missing or not valid'})
@@ -26,7 +26,7 @@ blogsRouter.post('/', async (request, response, next) => {
 
   try {
     const savedBlog = await blog.save()
-    user.blogs = user.notes.concat(savedBlog._id)
+    user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
 
     response.status(201).json(savedBlog.toJSON()) 
@@ -51,7 +51,8 @@ blogsRouter.put('/:id', async (request, response, next) => {
     title: reqBody.title,
     author: reqBody.author,
     url: reqBody.url,
-    likes: reqBody.likes
+    likes: reqBody.likes,
+    user: reqBody.userId
   }
 
   try {
