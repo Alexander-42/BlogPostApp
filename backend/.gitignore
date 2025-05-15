@@ -1,3 +1,4 @@
 node_modules/
 .env
 requests/creating_new_user.rest
+requests/login.rest
