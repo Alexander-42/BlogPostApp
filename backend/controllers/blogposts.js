@@ -8,14 +8,6 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs.map(blog => blog.toJSON()))
 })
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-      return authorization.slice(7)
-  }
-  return null
-}
-
 blogsRouter.post('/', async (request, response, next) => {
   try {  
     const blogBody = request.body
