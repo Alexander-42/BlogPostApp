@@ -8,4 +8,5 @@ const MONGODB_URI = process.env.NODE_ENV === 'test'
 
 const validTestPasswords = process.env.TEST_PASSWORDS_VALID.split(',')
 const invalidTestPassords = process.env.TEST_PASSWORDS_INVALID.split(',')
-module.exports = { MONGODB_URI, PORT, validTestPasswords, invalidTestPassords }
+const secret = process.env.SECRET
+module.exports = { MONGODB_URI, PORT, validTestPasswords, invalidTestPassords, secret }

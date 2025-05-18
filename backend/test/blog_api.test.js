@@ -2,6 +2,8 @@ const assert = require('node:assert')
 const { test, after, beforeEach, describe} = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const jwt = require('jsonwebtoken')
+
 const app = require('../app')
 const Blog = require('../models/blog')
 const bcryptjs = require('bcryptjs')
@@ -65,9 +67,15 @@ const testBlogNoUrl = {
 describe('Submitting blogs', () => {
 
     test('A new blog can be submitted and returns with status code 201 when succesful', async () => {
-
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200);
+        
+        const tokenString = JSON.parse(token.text).token
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
             .send(testBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -82,15 +90,31 @@ describe('Submitting blogs', () => {
     })
 
     test('Blogs require field title and returns with status code 400 when missing', async () => {
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200);
+        
+        const tokenString = JSON.parse(token.text).token
+
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
             .send(testBlogNoTitle)
             .expect(400)
     })
 
-    test('Blogs require field url and eturns with status code 400 when missing', async () => {
+    test('Blogs require field url and returns with status code 400 when missing', async () => {
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200);
+        
+        const tokenString = JSON.parse(token.text).token
+
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
             .send(testBlogNoUrl)
             .expect(400)
     })
@@ -98,9 +122,17 @@ describe('Submitting blogs', () => {
     describe('The default value for likes is 0', () => {
 
         test('Submitting a blog with likes field omitted', async () => {
-    
+            
+            const token = await api
+                .post('/api/login')
+                .send({username: 'root', password: validPasswords[0]})
+                .expect(200);
+        
+            const tokenString = JSON.parse(token.text).token
+
             await api
                 .post('/api/blogs')
+                .set('Authorization', `Bearer ${tokenString}`)
                 .send(testBlogLikesOmitted)
                 .expect(201)
     
@@ -111,9 +143,15 @@ describe('Submitting blogs', () => {
         })
     
         test('Submitting a blog with likes defined will return the submitted amount of likes', async () => {
-    
+            const token = await api
+                .post('/api/login')
+                .send({username: 'root', password: validPasswords[0]})
+                .expect(200);
+        
+            const tokenString = JSON.parse(token.text).token
             await api
                 .post('/api/blogs')
+                .set('Authorization', `Bearer ${tokenString}`)
                 .send(testBlog)
                 .expect(201)
             
@@ -171,12 +209,19 @@ describe('Returned blogs have correct fields and format', () => {
 describe('Deleting blogs', () => {
     
     test('succeeds with status code 204 if id is correct', async () => {
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200);
+
+        const tokenString = JSON.parse(token.text).token
         const blogs = await helper.blogsInDb()
 
         const deletableBlog = blogs[0]
 
         await api
             .delete(`/api/blogs/${deletableBlog.id}`)
+            .set('Authorization', `Bearer ${tokenString}`)
             .expect(204)
 
         const blogsAfterDel = await helper.blogsInDb()
