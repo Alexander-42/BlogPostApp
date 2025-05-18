@@ -11,35 +11,34 @@ blogsRouter.get('/', async (request, response) => {
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
-      return authorization.replace('Bearer', '')
+      return authorization.slice(7)
   }
   return null
 }
 
 blogsRouter.post('/', async (request, response, next) => {
-  const blogBody = request.body
+  try {  
+    const blogBody = request.body
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: "invalid token"})
+    }
 
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: "invalid token"})
-  }
+    const user = await User.findById(decodedToken.id)
 
+    if (!user) {
+      return response.status(400).json({ error: 'userId missing or not valid'})
+    }
 
-  const user = await User.findById(decodedToken.id)
+    const blog = new Blog({
+      author: blogBody.author,
+      title: blogBody.title,
+      url: blogBody.url,
+      likes: blogBody.likes,
+      user: user._id
+    })
 
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid'})
-  }
-
-  const blog = new Blog({
-    author: blogBody.content,
-    title: blogBody.title,
-    url: blogBody.url,
-    likes: blogBody.likes,
-    user: user._id
-  })
-
-  try {
+    
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
