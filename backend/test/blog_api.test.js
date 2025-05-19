@@ -225,7 +225,7 @@ describe('Returned blogs have correct fields and format', () => {
 
 describe('Deleting blogs', () => {
     
-    test('succeeds with status code 204 if id is correct', async () => {
+    test('succeeds with status code 204 if id and token are correct', async () => {
         const token = await api
             .post('/api/login')
             .send({username: 'root', password: validPasswords[0]})
@@ -254,7 +254,62 @@ describe('Deleting blogs', () => {
         const titles = blogsAfterDel.map(r => r.title)
         assert(!titles.includes(deletableBlog.title))
         
-        })
+    })
+
+    test('does not succeed with incorrect id', async () => {
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200);
+
+        const tokenString = JSON.parse(token.text).token
+        await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
+            .send({title: "Deletion test", author: "Deleter", url: "Delete.del", likes: 8})
+            .expect(201)
+        
+        const blogs = await helper.blogsInDb()
+
+        await api
+            .delete('/api/blogs/aonafo0982104jrfaija9')
+            .set('Authorization', `Bearer ${tokenString}`)
+            .expect(400)
+    })
+
+    test('does not succeed with incorrect token', async () => {
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200)
+        
+        await api
+            .post('/api/users')
+            .send({username: 'newuser', name: 'New User', password: validPasswords[1]})
+            .expect(201)
+        
+        const newUserToken = await api
+            .post('/api/login')
+            .send({username: 'newuser', password: validPasswords[1]})
+            .expect(200)
+        
+        const newUserTokenString = JSON.parse(newUserToken.text).token
+        const tokenString = JSON.parse(token.text).token
+        const postedBlog = await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
+            .send({title: "Deletion test", author: "Deleter", url: "Delete.del", likes: 8})
+            .expect(201)
+        
+        const blogs = await helper.blogsInDb()
+        const deletableBlog = blogs.find(blog => blog.id === postedBlog.body.id)
+        
+        await api
+            .delete(`/api/blogs/${deletableBlog.id}`)
+            .set('Authorization', `Bearer ${newUserTokenString}`)
+            .expect(401)
+    })
+
 })
 
 describe('Updating blogs', () => {
