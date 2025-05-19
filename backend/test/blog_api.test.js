@@ -90,12 +90,20 @@ describe('Submitting blogs', () => {
         assert(titles.includes('A third test blog'))
     })
 
-    test('A new blog cannot be submitted if the request does not contain a token', async () => {
+    test('A new blog cannot be submitted if the request does not contain auth header', async () => {
         await api
             .post('/api/blogs')
             .send(testBlog)
             .expect(401)
         
+    })
+
+    test('A new blog cannot be submitted if the token is invalid', async () => {
+        await api
+            .post('/api/blogs')
+            .set('Authorization', 'Some invalidToken')
+            .send(testBlog)
+            .expect(401)
     })
 
     test('Blogs require field title and returns with status code 400 when missing', async () => {
