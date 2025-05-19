@@ -256,7 +256,7 @@ describe('Deleting blogs', () => {
         
     })
 
-    test('does not succeed with incorrect id', async () => {
+    test('fails with status code 401 with incorrect id', async () => {
         const token = await api
             .post('/api/login')
             .send({username: 'root', password: validPasswords[0]})
@@ -277,7 +277,7 @@ describe('Deleting blogs', () => {
             .expect(400)
     })
 
-    test('does not succeed with incorrect token', async () => {
+    test('fails with status code 401 with incorrect token', async () => {
         const token = await api
             .post('/api/login')
             .send({username: 'root', password: validPasswords[0]})
@@ -307,6 +307,27 @@ describe('Deleting blogs', () => {
         await api
             .delete(`/api/blogs/${deletableBlog.id}`)
             .set('Authorization', `Bearer ${newUserTokenString}`)
+            .expect(401)
+    })
+
+    test('fails with status code 401 without auth header', async () => {
+        const token = await api
+            .post('/api/login')
+            .send({username: 'root', password: validPasswords[0]})
+            .expect(200)
+        
+        const tokenString = JSON.parse(token.text).token
+        const postedBlog = await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
+            .send({title: "Deletion test", author: "Deleter", url: "Delete.del", likes: 8})
+            .expect(201)
+        
+        const blogs = await helper.blogsInDb()
+        const deletableBlog = blogs.find(blog => blog.id === postedBlog.body.id)
+        
+        await api
+            .delete(`/api/blogs/${deletableBlog.id}`)
             .expect(401)
     })
 
@@ -375,7 +396,7 @@ describe('Database initialized with one user', () => {
         assert(usernames.includes(newUser.username))
     })
 
-    test('creation fails with statuscode 400 and message if username is taken', async () => {
+    test('creation fails with status code 400 and message if username is taken', async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
@@ -395,7 +416,7 @@ describe('Database initialized with one user', () => {
         assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
 
-    test('creation fails with statuscode 400 and message if password is less than 3 characters', async () => {
+    test('creation fails with status code 400 and message if password is less than 3 characters', async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
