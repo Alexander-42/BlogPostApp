@@ -37,8 +37,6 @@ blogsRouter.post('/', userExtractor, async (request, response, next) => {
 blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
   try {
     const blog = await Blog.findById(request.params.id)
-    console.log('This is at the controller')
-    console.log(request.user._id.toString())
     const user = request.user
     
     if ( blog.user.toString() !== user._id.toString()) {

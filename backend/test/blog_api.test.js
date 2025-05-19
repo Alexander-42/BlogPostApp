@@ -10,6 +10,7 @@ const bcryptjs = require('bcryptjs')
 const User = require('../models/user')
 const config = require('../utils/config')
 const helper = require('./test_helper')
+const blog = require('../models/blog')
 
 validPasswords = config.validTestPasswords
 invalidPasswords = config.invalidTestPassords
@@ -215,10 +216,16 @@ describe('Deleting blogs', () => {
             .expect(200);
 
         const tokenString = JSON.parse(token.text).token
+        const postedBlog = await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokenString}`)
+            .send({title: "Deletion test", author: "Deleter", url: "Delete.del", likes: 8})
+            .expect(201)
+        
+        
         const blogs = await helper.blogsInDb()
-
-        const deletableBlog = blogs[0]
-
+        const deletableBlog = blogs.find(blog => blog.id === postedBlog.body.id)
+        
         await api
             .delete(`/api/blogs/${deletableBlog.id}`)
             .set('Authorization', `Bearer ${tokenString}`)
@@ -226,11 +233,12 @@ describe('Deleting blogs', () => {
 
         const blogsAfterDel = await helper.blogsInDb()
 
-        assert.strictEqual(blogsAfterDel.length, initialBlogs.length - 1)
+        assert(!blogsAfterDel.some(blog => blog.id === postedBlog.id))
 
         const titles = blogsAfterDel.map(r => r.title)
         assert(!titles.includes(deletableBlog.title))
-    })
+        
+        })
 })
 
 describe('Updating blogs', () => {
