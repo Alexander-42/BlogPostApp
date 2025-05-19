@@ -90,6 +90,14 @@ describe('Submitting blogs', () => {
         assert(titles.includes('A third test blog'))
     })
 
+    test('A new blog cannot be submitted if the request does not contain a token', async () => {
+        await api
+            .post('/api/blogs')
+            .send(testBlog)
+            .expect(401)
+        
+    })
+
     test('Blogs require field title and returns with status code 400 when missing', async () => {
         const token = await api
             .post('/api/login')
