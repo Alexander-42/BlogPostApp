@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import ErrorMessage from './components/ErrorMessage'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -42,7 +43,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('Incorrect username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -142,7 +143,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      
+      <ErrorMessage message = {errorMessage} />
       {!user && loginForm()}
       {user && <div>
           {user.name} logged in {'  '}
