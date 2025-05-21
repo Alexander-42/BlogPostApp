@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import ErrorMessage from './components/ErrorMessage'
+import SuccessMessage from './components/SuccessMessage'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -10,6 +11,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -42,6 +44,10 @@ const App = () => {
       blogService.setToken(user.token)
       setUsername('')
       setPassword('')
+      setSuccessMessage('Login successful!')
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 2000)
     } catch (exception) {
       setErrorMessage('Incorrect username or password')
       setTimeout(() => {
@@ -60,6 +66,10 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      setSuccessMessage(`New blog \"${title}\" by ${author} added`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 3000)
     } catch (exception) {
       console.log(exception.response.data.error)
       setErrorMessage(exception.response.data.error)
@@ -143,6 +153,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
+      <SuccessMessage message = {successMessage} />
       <ErrorMessage message = {errorMessage} />
       {!user && loginForm()}
       {user && <div>
