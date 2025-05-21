@@ -9,7 +9,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [newBlog, setNewBlog] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -61,7 +60,11 @@ const App = () => {
       setAuthor('')
       setUrl('')
     } catch (exception) {
-      setErrorMessage('Something weird happened')
+      console.log(exception.response.data.error)
+      setErrorMessage(exception.response.data.error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
@@ -70,9 +73,8 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  if (user === null) {
-    return (
-      <div>
+  const loginForm = () => (
+    <div>
         <h2>
           Login
         </h2>
@@ -98,16 +100,13 @@ const App = () => {
             <button type="submit">Login</button>
         </form>
       </div>
-      )
-    }
-  
-  return (
-    <div>
-      {user.name} logged in 
-      <button onClick={handleLogout}>Logout</button>
-      <h2>blogs</h2>
-      <h2>Create new</h2>
-      <form onSubmit={handleNewBlog}>
+  )
+
+  const submitForm = () => (
+
+    <form onSubmit={handleNewBlog}>
+      <div>
+        <h2>Create new</h2>
         <div>
           title:
           <input
@@ -136,10 +135,25 @@ const App = () => {
           />
         </div>
         <button type="submit">create</button>
-      </form>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      </div>
+    </form>
+  )
+  
+  return (
+    <div>
+      <h1>Blogs</h1>
+      
+      {!user && loginForm()}
+      {user && <div>
+          {user.name} logged in {'  '}
+          <button onClick={handleLogout}>Logout</button>
+          {submitForm()}
+          <h2>blogs</h2>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} />
       )}
+        </div>
+      }
     </div>
   )
 }
