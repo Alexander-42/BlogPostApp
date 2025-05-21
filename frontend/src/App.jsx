@@ -4,8 +4,11 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import ErrorMessage from './components/ErrorMessage'
 import SuccessMessage from './components/SuccessMessage'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -84,72 +87,44 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const loginForm = () => (
-    <div>
-        <h2>
-          Login
-        </h2>
-        <form onSubmit={handleLogin}>
-          <div>
-              username 
-              <input
-              type = "text"
-              value = {username}
-              name = "Username"
-              onChange={({target}) => {setUsername(target.value)}}
-              />
-            </div>
-            <div>
-              password 
-              <input
-              type = "text"
-              value = {password}
-              name = "Password"
-              onChange={({target}) => {setPassword(target.value)}}
-              />
-            </div>
-            <button type="submit">Login</button>
-        </form>
-      </div>
-  )
-
-  const submitForm = () => (
-
-    <form onSubmit={handleNewBlog}>
+  const loginForm = () => {
+    return (
       <div>
-        <h2>Create new</h2>
-        <div>
-          title:
-          <input
-          type="text"
-          value={title}
-          name='title'
-          onChange = {({target}) => {setTitle(target.value)}}
-          />
-        </div>
-        <div>
-          author:
-          <input
-          type="text"
-          value={author}
-          name='author'
-          onChange = {({target}) => {setAuthor(target.value)}}
-          />
-        </div>
-        <div>
-          url:
-          <input
-          type="text"
-          value={url}
-          name="url"
-          onChange={({target}) => {setUrl(target.value)}}
-          />
-        </div>
-        <button type="submit">create</button>
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
       </div>
-    </form>
-  )
-  
+    )
+  }
+
+  const blogForm = () => {
+    const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
+    const showWhenVisible = { display: blogFormVisible ? '' : 'none'}
+    
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setBlogFormVisible(true)}>create</button>
+        </div>
+        <div style={showWhenVisible}>
+          <BlogForm 
+            handleSubmit={handleNewBlog}
+            handleAuthorChange={({ target }) => setAuthor(target.value)}
+            handleTitleChange={({ target }) => setTitle(target.value)}
+            handleUrlChange={({ target }) => setUrl(target.value)}
+            author={author}
+            title={title}
+            url={url}
+          />
+          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
   return (
     <div>
       <h1>Blogs</h1>
@@ -159,7 +134,7 @@ const App = () => {
       {user && <div>
           {user.name} logged in {'  '}
           <button onClick={handleLogout}>Logout</button>
-          {submitForm()}
+          {blogForm()}
           <h2>blogs</h2>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
