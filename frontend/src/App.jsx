@@ -62,10 +62,11 @@ const App = () => {
   const handleNewBlog = async (event) => {
     event.preventDefault()
     try {
-      const returnedBlog = await blogService.create({
+      await blogService.create({
         title, author, url
       })
-      setBlogs(blogs.concat(returnedBlog))
+      const allBlogsAfterPost = await blogService.getAll()
+      setBlogs(allBlogsAfterPost)
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -136,8 +137,17 @@ const App = () => {
           <button onClick={handleLogout}>Logout</button>
           {blogForm()}
           <h2>blogs</h2>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+          {blogs.sort((a,b) => a.likes < b.likes).map(blog =>
+            <Blog key={blog.id}
+            blog={blog}
+            currUser={user}
+            setBlogs={setBlogs}
+            blogs={blogs}
+            setErrorMessage={setErrorMessage}
+            errorMessage={errorMessage}
+            setSuccessMessage={setSuccessMessage}
+            successMessage={successMessage}
+            />
       )}
         </div>
       }
