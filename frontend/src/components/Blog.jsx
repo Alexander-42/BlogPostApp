@@ -3,7 +3,6 @@ import blogService from '../services/blogs'
 
 const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMessage }) => {
   const [visible, setVisible] = useState('')
-  const [likes, setLikes] = useState(blog.likes)
   
   const hideWhenVisible = { display: visible ? 'none': ''}
   const showWhenVisible = { display: visible ? '' : 'none'}
@@ -53,7 +52,7 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
   }
 
   return (
-  <div style={blogStyle}>
+  <div className={'blog'} style={blogStyle}>
     <div style={hideWhenVisible}>
       {blog.title} {blog.author} {' '}
       <button onClick={toggleVisibility}>view</button>
