@@ -2,6 +2,8 @@ import { useState } from 'react'
 import blogService from '../services/blogs'
 
 const BlogForm = ({
+    toggleVisibility,
+    blogFormRef,
     setBlogs,
     setSuccessMessage,
     setErrorMessage
@@ -16,6 +18,7 @@ const BlogForm = ({
             await blogService.create({
                 title, author, url
             })
+            toggleVisibility(blogFormRef)
             const allBlogsAfterPost = await blogService.getAll()
             setBlogs(allBlogsAfterPost)
             setTitle('')

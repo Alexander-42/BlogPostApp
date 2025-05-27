@@ -6,16 +6,15 @@ import SuccessMessage from './components/SuccessMessage'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
-import Login from './services/login'
 
 const App = () => {
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
 
   const blogFormRef = useRef()
+  const loginFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -35,6 +34,14 @@ const App = () => {
   const handleLogout = (event) => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogappUser')
+    setSuccessMessage('Logout successful!')
+    setTimeout(() => {
+      setSuccessMessage(null)
+    },2000)
+  }
+
+  const toggleFormVisibility = (ref) => {
+    ref.current.toggleVisibility()
   }
 
   return (
@@ -43,8 +50,10 @@ const App = () => {
       <SuccessMessage message = {successMessage} />
       <ErrorMessage message = {errorMessage} />
       {!user && <div>
-        <Togglable buttonLabel='login'>
-          <LoginForm 
+        <Togglable buttonLabel='login' ref={loginFormRef}>
+          <LoginForm
+            toggleVisibility={toggleFormVisibility}
+            loginFormRef={loginFormRef}
             setUser={setUser}
             setErrorMessage={setErrorMessage}
             setSuccessMessage={setSuccessMessage}
@@ -55,8 +64,10 @@ const App = () => {
           {user.name} logged in {'  '}
           <button onClick={handleLogout}>Logout</button>
           <div>
-            <Togglable buttonLabel='create'>
+            <Togglable buttonLabel='create' ref={blogFormRef}>
               <BlogForm buttonLabel='create'
+                toggleVisibility={toggleFormVisibility}
+                blogFormRef = {blogFormRef}
                 setBlogs={setBlogs}
                 setErrorMessage={setErrorMessage}
                 setSuccessMessage={setSuccessMessage}
