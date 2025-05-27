@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMessage }) => {
+const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMessage, handleLike }) => {
   const [visible, setVisible] = useState('')
 
   const hideWhenVisible = { display: visible ? 'none': '' }
@@ -18,16 +18,6 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
 
   const toggleVisibility = () => {
     setVisible(!visible)
-  }
-
-  const handleLike = async () => {
-    try {
-      await blogService.update(blog.id, { ...blog, likes: blog.likes + 1 })
-      const blogsAfterUpdate = await blogService.getAll()
-      setBlogs(blogsAfterUpdate)
-    } catch (exception) {
-      console.log('Like unsuccesful')
-    }
   }
 
   const handleDiscard = () => {
@@ -53,11 +43,11 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
 
   return (
     <div className={'blog'} style={blogStyle}>
-      <div style={hideWhenVisible}>
+      <div data-testid='titleAndAuthor' style={hideWhenVisible}>
         {blog.title} {blog.author} {' '}
-        <button onClick={toggleVisibility}>view</button>
+        <button data-testid='ViewAllFields' onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showWhenVisible}>
+      <div data-testid='allFields' style={showWhenVisible}>
         <div>
           {blog.title} {blog.author} {' '}
           <button onClick={toggleVisibility}>hide</button>
@@ -65,9 +55,9 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
         <div>
           {blog.url}
         </div>
-        <div>
+        <div data-testid='blogLikes'>
         likes: {blog.likes} {' '}
-          <button onClick={handleLike}>like</button>
+          <button data-testid='likeBlog' onClick={handleLike}>like</button>
         </div>
         <div>
           {blog.user.name}

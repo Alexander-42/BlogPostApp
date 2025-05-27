@@ -6,6 +6,7 @@ import SuccessMessage from './components/SuccessMessage'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import blogService from './services/blogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -42,6 +43,16 @@ const App = () => {
 
   const toggleFormVisibility = (ref) => {
     ref.current.toggleVisibility()
+  }
+
+  const handleLike = async () => {
+    try {
+      await blogService.update(blog.id, { ...blog, likes: blog.likes + 1 })
+      const blogsAfterUpdate = await blogService.getAll()
+      setBlogs(blogsAfterUpdate)
+    } catch (exception) {
+      console.log('Like unsuccesful')
+    }
   }
 
   return (
@@ -83,6 +94,7 @@ const App = () => {
             blogs={blogs}
             setErrorMessage={setErrorMessage}
             setSuccessMessage={setSuccessMessage}
+            handleLike={handleLike}
           />
         )}
       </div>
