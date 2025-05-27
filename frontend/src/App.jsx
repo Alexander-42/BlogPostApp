@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import ErrorMessage from './components/ErrorMessage'
 import SuccessMessage from './components/SuccessMessage'
+import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Login from './services/login'
 
 const App = () => {
   const [blogFormVisible, setBlogFormVisible] = useState(false)
@@ -12,6 +14,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -33,48 +37,32 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const loginForm = () => {
-    return (
-      <div>
-        <LoginForm
-          setUser={setUser}
-          setErrorMessage={setErrorMessage}
-          setSuccessMessage={setSuccessMessage}
-        />
-      </div>
-    )
-  }
-
-  const blogForm = () => {
-    const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
-    const showWhenVisible = { display: blogFormVisible ? '' : 'none'}
-    
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>create</button>
-        </div>
-        <div style={showWhenVisible}>
-          <BlogForm 
-            setBlogs={setBlogs}
-            setErrorMessage={setErrorMessage}
-            setSuccessMessage={setSuccessMessage}
-          />
-          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
   return (
     <div>
       <h1>Blogs</h1>
       <SuccessMessage message = {successMessage} />
       <ErrorMessage message = {errorMessage} />
-      {!user && loginForm()}
+      {!user && <div>
+        <Togglable buttonLabel='login'>
+          <LoginForm 
+            setUser={setUser}
+            setErrorMessage={setErrorMessage}
+            setSuccessMessage={setSuccessMessage}
+          />
+        </Togglable>
+        </div>}
       {user && <div>
           {user.name} logged in {'  '}
           <button onClick={handleLogout}>Logout</button>
-          {blogForm()}
+          <div>
+            <Togglable buttonLabel='create'>
+              <BlogForm buttonLabel='create'
+                setBlogs={setBlogs}
+                setErrorMessage={setErrorMessage}
+                setSuccessMessage={setSuccessMessage}
+              />
+            </Togglable>
+          </div>
           <h2>blogs</h2>
           {blogs.sort((a,b) => a.likes < b.likes).map(blog =>
             <Blog key={blog.id}
