@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import ErrorMessage from './components/ErrorMessage'
 import SuccessMessage from './components/SuccessMessage'
 import LoginForm from './components/LoginForm'
@@ -10,8 +9,6 @@ import BlogForm from './components/BlogForm'
 const App = () => {
   const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
@@ -33,31 +30,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username, password
-      })
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      setUser(user)
-      blogService.setToken(user.token)
-      setUsername('')
-      setPassword('')
-      setSuccessMessage('Login successful!')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 2000)
-    } catch (exception) {
-      setErrorMessage('Incorrect username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }
 
   const handleNewBlog = async (event) => {
     event.preventDefault()
@@ -92,11 +64,9 @@ const App = () => {
     return (
       <div>
         <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
+          setUser={setUser}
+          setErrorMessage={setErrorMessage}
+          setSuccessMessage={setSuccessMessage}
         />
       </div>
     )
