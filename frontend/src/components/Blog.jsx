@@ -13,7 +13,7 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    paddingBottom: 5
   }
 
   const toggleVisibility = () => {
