@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -59,33 +59,33 @@ const App = () => {
             setSuccessMessage={setSuccessMessage}
           />
         </Togglable>
-        </div>}
+      </div>}
       {user && <div>
-          {user.name} logged in {'  '}
-          <button onClick={handleLogout}>Logout</button>
-          <div>
-            <Togglable buttonLabel='create' ref={blogFormRef}>
-              <BlogForm buttonLabel='create'
-                toggleVisibility={toggleFormVisibility}
-                blogFormRef = {blogFormRef}
-                setBlogs={setBlogs}
-                setErrorMessage={setErrorMessage}
-                setSuccessMessage={setSuccessMessage}
-              />
-            </Togglable>
-          </div>
-          <h2>blogs</h2>
-          {blogs.sort((a,b) => a.likes < b.likes).map(blog =>
-            <Blog key={blog.id}
+        {user.name} logged in {'  '}
+        <button onClick={handleLogout}>Logout</button>
+        <div>
+          <Togglable buttonLabel='create' ref={blogFormRef}>
+            <BlogForm buttonLabel='create'
+              toggleVisibility={toggleFormVisibility}
+              blogFormRef = {blogFormRef}
+              setBlogs={setBlogs}
+              setErrorMessage={setErrorMessage}
+              setSuccessMessage={setSuccessMessage}
+            />
+          </Togglable>
+        </div>
+        <h2>blogs</h2>
+        {blogs.sort((a,b) => a.likes < b.likes).map(blog =>
+          <Blog key={blog.id}
             blog={blog}
             currUser={user}
             setBlogs={setBlogs}
             blogs={blogs}
             setErrorMessage={setErrorMessage}
             setSuccessMessage={setSuccessMessage}
-            />
-      )}
-        </div>
+          />
+        )}
+      </div>
       }
     </div>
   )

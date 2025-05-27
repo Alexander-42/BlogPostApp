@@ -1,13 +1,13 @@
 const SuccessMessage = ({ message }) => {
-    if (message === null) {
-        return null
-    }
+  if (message === null) {
+    return null
+  }
 
-    return (
-        <div className="success">
-            {message}
-        </div>
-    )
+  return (
+    <div className="success">
+      {message}
+    </div>
+  )
 }
 
 export default SuccessMessage

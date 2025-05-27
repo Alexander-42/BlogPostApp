@@ -3,10 +3,10 @@ import blogService from '../services/blogs'
 
 const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMessage }) => {
   const [visible, setVisible] = useState('')
-  
-  const hideWhenVisible = { display: visible ? 'none': ''}
-  const showWhenVisible = { display: visible ? '' : 'none'}
-  const showIfCurrUser = { display: currUser.username === blog.user.username ? '': 'none'}
+
+  const hideWhenVisible = { display: visible ? 'none': '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+  const showIfCurrUser = { display: currUser.username === blog.user.username ? '': 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -19,10 +19,10 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
   const toggleVisibility = () => {
     setVisible(!visible)
   }
-  
+
   const handleLike = async () => {
     try {
-      await blogService.update(blog.id, {...blog, likes: blog.likes + 1})
+      await blogService.update(blog.id, { ...blog, likes: blog.likes + 1 })
       const blogsAfterUpdate = await blogService.getAll()
       setBlogs(blogsAfterUpdate)
     } catch (exception) {
@@ -52,32 +52,32 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
   }
 
   return (
-  <div className={'blog'} style={blogStyle}>
-    <div style={hideWhenVisible}>
-      {blog.title} {blog.author} {' '}
-      <button onClick={toggleVisibility}>view</button>
-    </div>
-    <div style={showWhenVisible}>
-      <div>
+    <div className={'blog'} style={blogStyle}>
+      <div style={hideWhenVisible}>
         {blog.title} {blog.author} {' '}
-        <button onClick={toggleVisibility}>hide</button>
+        <button onClick={toggleVisibility}>view</button>
       </div>
-      <div>
-        {blog.url}
-      </div>
-      <div>
+      <div style={showWhenVisible}>
+        <div>
+          {blog.title} {blog.author} {' '}
+          <button onClick={toggleVisibility}>hide</button>
+        </div>
+        <div>
+          {blog.url}
+        </div>
+        <div>
         likes: {blog.likes} {' '}
-        <button onClick={handleLike}>like</button>
-      </div>
-      <div>
-        {blog.user.name}
-      </div>
-      <div style={showIfCurrUser}>
-        <button onClick={handleDiscard}>delete</button>
+          <button onClick={handleLike}>like</button>
+        </div>
+        <div>
+          {blog.user.name}
+        </div>
+        <div style={showIfCurrUser}>
+          <button onClick={handleDiscard}>delete</button>
+        </div>
       </div>
     </div>
-  </div> 
 
-)}
+  )}
 
 export default Blog
