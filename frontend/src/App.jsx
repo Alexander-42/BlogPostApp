@@ -83,9 +83,7 @@ const App = () => {
             setBlogs={setBlogs}
             blogs={blogs}
             setErrorMessage={setErrorMessage}
-            errorMessage={errorMessage}
             setSuccessMessage={setSuccessMessage}
-            successMessage={successMessage}
             />
       )}
         </div>

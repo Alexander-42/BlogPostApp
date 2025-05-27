@@ -59,7 +59,7 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
     </div>
     <div style={showWhenVisible}>
       <div>
-        {blog.title} {blog.author}
+        {blog.title} {blog.author} {' '}
         <button onClick={toggleVisibility}>hide</button>
       </div>
       <div>
