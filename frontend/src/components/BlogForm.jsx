@@ -1,14 +1,41 @@
+import { useState } from 'react'
+import blogService from '../services/blogs'
+
 const BlogForm = ({
-    handleSubmit,
-    handleTitleChange,
-    handleAuthorChange,
-    handleUrlChange,
-    title,
-    author,
-    url
+    setBlogs,
+    setSuccessMessage,
+    setErrorMessage
 }) => {
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setUrl] = useState('')
+
+    const handleNewBlog = async (event) => {
+        event.preventDefault()
+        try {
+            await blogService.create({
+                title, author, url
+            })
+            const allBlogsAfterPost = await blogService.getAll()
+            setBlogs(allBlogsAfterPost)
+            setTitle('')
+            setAuthor('')
+            setUrl('')
+            setSuccessMessage(`New blog \"${title}\" by ${author} added`)
+            setTimeout(() => {
+                setSuccessMessage(null)
+            }, 3000)
+        } catch (exception) {
+            console.log(exception.response.data.error)
+            setErrorMessage(exception.response.data.error)
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
+        }
+  }
+
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleNewBlog}>
             <div>
             <h2>Create new</h2>
             <div>
@@ -17,7 +44,7 @@ const BlogForm = ({
                 type="text"
                 value={title}
                 name='title'
-                onChange = {handleTitleChange}
+                onChange = {({ target }) => setTitle(target.value)}
                 />
             </div>
             <div>
@@ -26,7 +53,7 @@ const BlogForm = ({
                 type="text"
                 value={author}
                 name='author'
-                onChange = {handleAuthorChange}
+                onChange = {({ target }) => setAuthor(target.value)}
                 />
             </div>
             <div>
@@ -35,7 +62,7 @@ const BlogForm = ({
                 type="text"
                 value={url}
                 name="url"
-                onChange={handleUrlChange}
+                onChange={({ target }) => setUrl(target.value)}
                 />
             </div>
             <button type="submit">create</button>

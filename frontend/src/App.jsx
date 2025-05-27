@@ -12,9 +12,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -30,30 +27,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const handleNewBlog = async (event) => {
-    event.preventDefault()
-    try {
-      await blogService.create({
-        title, author, url
-      })
-      const allBlogsAfterPost = await blogService.getAll()
-      setBlogs(allBlogsAfterPost)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setSuccessMessage(`New blog \"${title}\" by ${author} added`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 3000)
-    } catch (exception) {
-      console.log(exception.response.data.error)
-      setErrorMessage(exception.response.data.error)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }
 
   const handleLogout = (event) => {
     setUser(null)
@@ -83,13 +56,9 @@ const App = () => {
         </div>
         <div style={showWhenVisible}>
           <BlogForm 
-            handleSubmit={handleNewBlog}
-            handleAuthorChange={({ target }) => setAuthor(target.value)}
-            handleTitleChange={({ target }) => setTitle(target.value)}
-            handleUrlChange={({ target }) => setUrl(target.value)}
-            author={author}
-            title={title}
-            url={url}
+            setBlogs={setBlogs}
+            setErrorMessage={setErrorMessage}
+            setSuccessMessage={setSuccessMessage}
           />
           <button onClick={() => setBlogFormVisible(false)}>cancel</button>
         </div>
