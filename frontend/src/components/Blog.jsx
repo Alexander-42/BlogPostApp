@@ -57,7 +57,7 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
         </div>
         <div data-testid='blogLikes'>
         likes: {blog.likes} {' '}
-          <button data-testid='likeBlog' onClick={handleLike}>like</button>
+          <button data-testid='likeBlog' onClick={() => handleLike(blog)}>like</button>
         </div>
         <div>
           {blog.user.name}

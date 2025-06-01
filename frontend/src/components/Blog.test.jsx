@@ -8,25 +8,25 @@ describe('By default', () => {
 
   beforeEach(() => {
     const blog = {
-    title: 'This is a title',
-    author: 'This is an author',
-    url: 'ThisSite.domain',
-    likes: 9,
-    user: {
-      id: 'This is a test ID',
-      name: 'This is a user test name',
-      username: 'This is a user test username'
+      title: 'This is a title',
+      author: 'This is an author',
+      url: 'ThisSite.domain',
+      likes: 9,
+      user: {
+        id: 'This is a test ID',
+        name: 'This is a user test name',
+        username: 'This is a user test username'
       }
     }
 
-    render(<Blog blog={blog} currUser = {{username: 'This is a user test username'}} />)
+    render(<Blog blog={blog} currUser = {{ usernam: 'This is a user test username' }} />)
   })
-  
+
   test('only the Author and Title are rendered and shown', () => {
-    const authorAndTitleOnly = screen.getByTestId('titleAndAuthor')  
+    const authorAndTitleOnly = screen.getByTestId('titleAndAuthor')
     expect(authorAndTitleOnly).toBeVisible()
   })
-  
+
   test('Other fields are not shown', () => {
     const allInfo = screen.getByTestId('allFields')
     expect(allInfo).not.toBeVisible()
@@ -51,7 +51,7 @@ describe('when the "view" button is clicked', () => {
       }
     }
 
-    render(<Blog blog={blog} currUser = {{username: 'This is a user test username'}} handleLike={mockHandler}/>)
+    render(<Blog blog={blog} currUser = {{ username: 'This is a user test username' }} handleLike={mockHandler}/>)
 
     const viewButton = screen.getByTestId('ViewAllFields')
     await user.click(viewButton)
@@ -66,11 +66,9 @@ describe('when the "view" button is clicked', () => {
     const likeButton = screen.getByTestId('likeBlog')
     await user.click(likeButton)
     await user.click(likeButton)
-    
+
     expect(mockHandler.mock.calls).toHaveLength(2)
-  
+
   })
 
 })
-
-

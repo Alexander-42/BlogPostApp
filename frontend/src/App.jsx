@@ -6,7 +6,7 @@ import SuccessMessage from './components/SuccessMessage'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
-import blogService from './services/blogs'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -45,7 +45,7 @@ const App = () => {
     ref.current.toggleVisibility()
   }
 
-  const handleLike = async () => {
+  const handleLike = async (blog) => {
     try {
       await blogService.update(blog.id, { ...blog, likes: blog.likes + 1 })
       const blogsAfterUpdate = await blogService.getAll()
