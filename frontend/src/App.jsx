@@ -61,15 +61,11 @@ const App = () => {
       <SuccessMessage message = {successMessage} />
       <ErrorMessage message = {errorMessage} />
       {!user && <div>
-        <Togglable buttonLabel='login' ref={loginFormRef}>
-          <LoginForm
-            toggleVisibility={toggleFormVisibility}
-            loginFormRef={loginFormRef}
-            setUser={setUser}
-            setErrorMessage={setErrorMessage}
-            setSuccessMessage={setSuccessMessage}
-          />
-        </Togglable>
+        <LoginForm
+          setUser={setUser}
+          setErrorMessage={setErrorMessage}
+          setSuccessMessage={setSuccessMessage}
+        />
       </div>}
       {user && <div>
         {user.name} logged in {'  '}

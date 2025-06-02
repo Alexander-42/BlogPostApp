@@ -4,8 +4,6 @@ import loginService from '../services/login'
 
 
 const LoginForm = ({
-  toggleVisibility,
-  loginFormRef,
   setUser,
   setErrorMessage,
   setSuccessMessage
@@ -19,7 +17,6 @@ const LoginForm = ({
       const user = await loginService.login({
         username, password
       })
-      toggleVisibility(loginFormRef)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
