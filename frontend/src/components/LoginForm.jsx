@@ -60,7 +60,7 @@ const LoginForm = ({
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">Login</button>
+        <button data-testid="login-submit" type="submit">Login</button>
       </form>
     </div>
   )

@@ -15,7 +15,6 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
 
   const blogFormRef = useRef()
-  const loginFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>

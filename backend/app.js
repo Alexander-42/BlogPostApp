@@ -1,5 +1,6 @@
 const config = require('./utils/config')
 const express = require('express')
+const cors = require('cors')
 const blogsRouter = require('./controllers/blogposts')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
@@ -21,7 +22,7 @@ mongoose.connect(mongoUrl)
   .catch((error) => {
     logger.error('error connecting to MongoDB', error.message)
 })
-
+app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
@@ -32,7 +33,7 @@ app.use('/api/login', loginRouter)
 
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')
-  app.use('/api/reset', testingRouter)
+  app.use('/api/testing', testingRouter)
 }
 
 app.use(middleware.unknownEndpoint)
