@@ -8,6 +8,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { useDispatch } from 'react-redux'
 import { setSuccessMessage } from './reducers/successMessageReducer'
+import { setErrorMessage } from './reducers/errorMessageReducer'
 
 
 const App = () => {
@@ -15,7 +16,6 @@ const App = () => {
 
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -50,19 +50,18 @@ const App = () => {
       const blogsAfterUpdate = await blogService.getAll()
       setBlogs(blogsAfterUpdate)
     } catch (exception) {
-      console.log('Like unsuccesful')
+      dispatch(setErrorMessage('Like unsuccessful', 5))
     }
   }
 
   return (
     <div>
       <h1>Blogs</h1>
-      <SuccessMessage/>
-      <ErrorMessage message = {errorMessage} />
+      <SuccessMessage />
+      <ErrorMessage />
       {!user && <div>
         <LoginForm
           setUser={setUser}
-          setErrorMessage={setErrorMessage}
         />
       </div>}
       {user && <div>
@@ -74,7 +73,6 @@ const App = () => {
               toggleVisibility={toggleFormVisibility}
               blogFormRef = {blogFormRef}
               setBlogs={setBlogs}
-              setErrorMessage={setErrorMessage}
             />
           </Togglable>
         </div>
@@ -85,7 +83,6 @@ const App = () => {
             currUser={user}
             setBlogs={setBlogs}
             blogs={blogs}
-            setErrorMessage={setErrorMessage}
             handleLike={handleLike}
           />
         )}

@@ -3,10 +3,10 @@ import blogService from '../services/blogs'
 import loginService from '../services/login'
 import { useDispatch } from 'react-redux'
 import { setSuccessMessage } from '../reducers/successMessageReducer'
+import { setErrorMessage } from '../reducers/errorMessageReducer'
 
 const LoginForm = ({
-  setUser,
-  setErrorMessage
+  setUser
 }) => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
@@ -27,10 +27,7 @@ const LoginForm = ({
       setPassword('')
       dispatch(setSuccessMessage('Login successful!', 5))
     } catch (exception) {
-      setErrorMessage('Incorrect username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(setErrorMessage('Incorrect username or password', 5))
     }
   }
 
