@@ -1,11 +1,13 @@
-const SuccessMessage = ({ message }) => {
-  if (message === null) {
-    return null
-  }
+import { useSelector } from "react-redux"
 
+const SuccessMessage = () => {
+  const successMessage = useSelector(state => state.successMessage)
+  if (successMessage === null) {
+    return
+  }
   return (
     <div className="success">
-      {message}
+      {successMessage}
     </div>
   )
 }

@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 import loginService from '../services/login'
-
+import { useDispatch } from 'react-redux'
+import { setSuccessMessage } from '../reducers/successMessageReducer'
 
 const LoginForm = ({
   setUser,
-  setErrorMessage,
-  setSuccessMessage
+  setErrorMessage
 }) => {
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -24,10 +25,7 @@ const LoginForm = ({
       blogService.setToken(user.token)
       setUsername('')
       setPassword('')
-      setSuccessMessage('Login successful!')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 2000)
+      dispatch(setSuccessMessage('Login successful!', 5))
     } catch (exception) {
       setErrorMessage('Incorrect username or password')
       setTimeout(() => {

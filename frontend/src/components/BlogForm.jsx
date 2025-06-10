@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { setSuccessMessage } from '../reducers/successMessageReducer'
 
 const BlogForm = ({
   toggleVisibility,
   blogFormRef,
   setBlogs,
-  setSuccessMessage,
   setErrorMessage
 }) => {
+  const dispatch = useDispatch()
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -24,10 +26,7 @@ const BlogForm = ({
       setTitle('')
       setAuthor('')
       setUrl('')
-      setSuccessMessage(`New blog "${title}" by ${author} added`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 3000)
+      dispatch(setSuccessMessage(`New blog "${title}" by ${author} added`, 5))
     } catch (exception) {
       console.log(exception.response.data.error)
       setErrorMessage(exception.response.data.error)

@@ -6,13 +6,16 @@ import SuccessMessage from './components/SuccessMessage'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import { useDispatch } from 'react-redux'
+import { setSuccessMessage } from './reducers/successMessageReducer'
 
 
 const App = () => {
+  const dispatch = useDispatch()
+
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -34,10 +37,7 @@ const App = () => {
   const handleLogout = (event) => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogappUser')
-    setSuccessMessage('Logout successful!')
-    setTimeout(() => {
-      setSuccessMessage(null)
-    },2000)
+    dispatch(setSuccessMessage('Logout successful!', 5))
   }
 
   const toggleFormVisibility = (ref) => {
@@ -57,13 +57,12 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <SuccessMessage message = {successMessage} />
+      <SuccessMessage/>
       <ErrorMessage message = {errorMessage} />
       {!user && <div>
         <LoginForm
           setUser={setUser}
           setErrorMessage={setErrorMessage}
-          setSuccessMessage={setSuccessMessage}
         />
       </div>}
       {user && <div>
@@ -76,7 +75,6 @@ const App = () => {
               blogFormRef = {blogFormRef}
               setBlogs={setBlogs}
               setErrorMessage={setErrorMessage}
-              setSuccessMessage={setSuccessMessage}
             />
           </Togglable>
         </div>
@@ -88,7 +86,6 @@ const App = () => {
             setBlogs={setBlogs}
             blogs={blogs}
             setErrorMessage={setErrorMessage}
-            setSuccessMessage={setSuccessMessage}
             handleLike={handleLike}
           />
         )}

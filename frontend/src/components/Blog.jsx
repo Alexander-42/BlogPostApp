@@ -1,7 +1,11 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import blogService from '../services/blogs'
+import { setSuccessMessage } from '../reducers/successMessageReducer'
 
-const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMessage, handleLike }) => {
+const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, handleLike }) => {
+  const dispatch = useDispatch()
+
   const [visible, setVisible] = useState('')
 
   const hideWhenVisible = { display: visible ? 'none': '' }
@@ -27,10 +31,7 @@ const Blog = ({ blog, currUser, setBlogs, blogs, setErrorMessage, setSuccessMess
       try {
         blogService.discard(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
-        setSuccessMessage('Deletion successful!')
-        setTimeout(() => {
-          setSuccessMessage(null)
-        }, 2000)
+        dispatch(setSuccessMessage(`Deleted blog '${blog.title}' successfully`, 5))
       } catch (exception) {
         setErrorMessage('Deletion failed')
         setTimeout(() => {
